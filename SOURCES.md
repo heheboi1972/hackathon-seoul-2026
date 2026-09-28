@@ -22,4 +22,4 @@
 | `ROLE_POLICY_BLOCKCHAIN.md` | 시우: 정책 엔진·감사 hash·testnet 작업 명세 |
 | `ROLE_DATA_INTEGRATION_QA.md` | 민규: 가상 상품·simulator·QA 작업 명세 |
 
-원본 PDF와 사용자가 제공한 GWDC.txt를 보존했다. 원본 챌린지 기준에서 Kiln 모델 요구사항은 `gpt-oss-120b`이므로 오래된 설계 문서의 잘못된 `Qwen3-32B` 표기를 바로잡았다. 운영진이 제공하는 실제 `KILN_MODEL` 식별자, API 접속 방법, 허용 testnet은 실연동 전에 확인해야 한다.
+원본 PDF와 사용자가 제공한 GWDC.txt를 그대로 보존했다. 사용자의 최신 결정에 따라 프로젝트에서 사용할 모델은 `Qwen3-32B`로 설정했다. 단, 첨부된 FuriosaAI 원문은 `gpt-oss-120b` 실호출을 요구하므로 Qwen3-32B가 허용되는지 운영진에게 확인해야 한다. 모델 식별자·API 접속 방법·허용 testnet도 실연동 전에 확인한다.
