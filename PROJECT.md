@@ -8,9 +8,11 @@
 
 ## 1. 프로젝트 목적과 문서 기준
 
-FuriosaAI Challenge A 해커톤을 위한 4인 팀 MVP 설계 문서다. AI에게 구매 업무를 맡겼을 때 의도를 잘못 이해하거나 허용 범위를 벗어나는 문제를 다룬다. gpt-oss-120b는 자연어 해석과 추천을 담당하고, 일반 코드로 만든 Policy Engine이 실행 조건을 강제한다. 사용자는 조건과 최종 구매를 각각 확인한다.
+FuriosaAI Challenge A 해커톤을 위한 4인 팀 MVP 설계 문서다.
 
-- 모델: **gpt-oss-120b**, Kiln API를 통해 호출. 챌린지 원문에서 요구하는 모델을 사용한다.
+> **모델 설정:** 사용자 결정에 따라 프로젝트는 Kiln의 **Qwen3-32B**를 사용하도록 계획합니다. 다만 첨부된 FuriosaAI 챌린지 원문에는 `gpt-oss-120b` 실호출 요구가 있으므로, Qwen3-32B 사용이 허용되는지 운영진 확인이 필요합니다. 확인 전에는 해당 모델 요건을 충족했다고 표시하지 않습니다. AI에게 구매 업무를 맡겼을 때 의도를 잘못 이해하거나 허용 범위를 벗어나는 문제를 다룬다. Qwen3-32B는 자연어 해석과 추천을 담당하고, 일반 코드로 만든 Policy Engine이 실행 조건을 강제한다. 사용자는 조건과 최종 구매를 각각 확인한다.
+
+- 모델: 사용자 결정에 따라 **Qwen3-32B**를 Kiln API로 호출하도록 계획한다. 첨부된 챌린지 원문의 `gpt-oss-120b` 요구와 다르므로 운영진 확인이 필요하다.
 - 작성 근거: 기존 프로젝트 대화와 이번 사용자 요청. 공식 PDF 원문과 최신 운영진 공지를 직접 재검증한 문서는 아니다.
 - 아래 API, 데이터 형식, 일정, 테스트넷 방식은 **팀 구현 제안**이다. 이미 구현되었다는 뜻이 아니다.
 - 착수 시 운영진의 실제 API 주소, 인증 방식, 모델 식별자, 토큰 사용량 제공 방식, 허용 테스트넷과 제출 규정을 확인한다. 모의 구매·온체인 기록 방식의 과제 인정 여부도 확인한다.
@@ -38,7 +40,7 @@ FuriosaAI Challenge A 해커톤을 위한 4인 팀 MVP 설계 문서다. AI에�
 ## 3. 시스템 구조
 
 ```text
-Frontend → FastAPI → Kiln API → gpt-oss-120b
+Frontend → FastAPI → Kiln API → Qwen3-32B
               │          자연어 해석 / 후보 추천 / 설명
               ├→ Product Repository: 가상 상품 조회
               ├→ Policy Engine: 조건 검사 및 실행 차단
@@ -52,7 +54,7 @@ Frontend → FastAPI → Kiln API → gpt-oss-120b
 
 | 구성 | 역할 | 하지 않는 일 |
 |---|---|---|
-| gpt-oss-120b / Kiln | 조건 초안 추출, 제공된 후보 비교, 근거 작성 | 승인 여부 확정, 가격 창작, 지갑 키 접근 |
+| Qwen3-32B / Kiln | 조건 초안 추출, 제공된 후보 비교, 근거 작성 | 승인 여부 확정, 가격 창작, 지갑 키 접근 |
 | FastAPI | 세션·상태·DB·모듈 호출·승인 검증 | 클라이언트의 가격·통과 여부 신뢰 |
 | Policy Engine | 서버 데이터로 모든 제한 검사 | LLM의 “구매 가능” 문장을 승인으로 사용 |
 | Purchase Simulator | 정확히 한 번의 논리적 모의 주문 생성 | 실제 결제 |
@@ -158,7 +160,7 @@ approve는 `Idempotency-Key`를 받는다. 같은 키와 같은 본문은 같은
 
 | 담당 | 책임 | 체크리스트 |
 |---|---|---|
-| 1. Backend / Agent | FastAPI, Kiln/gpt-oss-120b, 상태·승인·실행 조정 | [ROLE_BACKEND_AGENT.md](ROLE_BACKEND_AGENT.md) |
+| 1. Backend / Agent | FastAPI, Kiln/Qwen3-32B, 상태·승인·실행 조정 | [ROLE_BACKEND_AGENT.md](ROLE_BACKEND_AGENT.md) |
 | 2. Frontend | 요청·조건 확인·추천·승인·이력 화면 | [ROLE_FRONTEND.md](ROLE_FRONTEND.md) |
 | 3. Policy / Blockchain | 정책 검사, 테스트넷 감사 기록, receipt | [ROLE_POLICY_BLOCKCHAIN.md](ROLE_POLICY_BLOCKCHAIN.md) |
 | 4. Data / Integration / QA | 상품·모의 구매 모듈, E2E, 계측·데모 검증 | [ROLE_DATA_INTEGRATION_QA.md](ROLE_DATA_INTEGRATION_QA.md) |
@@ -173,7 +175,7 @@ Day 3 또는 마지막 반나절: 새 기능을 멈추고 실측 로그·TX 증�
 
 같은 42,900원 상품과 동일 기준 시각으로 두 요청을 실행한다. A는 예산 50,000원으로 통과·사용자 승인·모의 구매·테스트넷 기록을 보여준다. B는 예산 30,000원으로 바꿔 `BUDGET_EXCEEDED`와 구매 미실행을 보여준다. 두 요청 ID와 정책 차이를 함께 보존한다.
 
-- [ ] 실제 Kiln/gpt-oss-120b 호출이 조건 추출과 추천에 사용된다.
+- [ ] 실제 Kiln/Qwen3-32B 호출이 조건 추출과 추천에 사용된다.
 - [ ] 누락된 조건은 질문하고 사용자 확인 전에 실행하지 않는다.
 - [ ] 예산·판매처·카테고리·배송·유효기간 위반을 각각 차단한다.
 - [ ] 최종 승인 없이 실행되지 않으며 반복·동시 승인에도 구매는 1회다.
@@ -190,6 +192,6 @@ Day 3 또는 마지막 반나절: 새 기능을 멈추고 실측 로그·TX 증�
 
 권장 구성은 Python/FastAPI, 프론트엔드 React 계열, SQLite 또는 PostgreSQL, JSON fixture다. 버전은 구현 시작 시 팀이 고정한다. 체인은 운영진 허용 범위를 확인한 뒤 선택하며 `network`, `chain_id`, RPC, explorer, 확인 기준을 명시한다.
 
-설정 항목: `KILN_BASE_URL`, `KILN_API_KEY`, `KILN_MODEL`, `DATABASE_URL`, `CHAIN_RPC_URL`, `CHAIN_ID`, `AUDIT_CONTRACT_ADDRESS`, `TESTNET_PRIVATE_KEY`. 모델의 표시명은 gpt-oss-120b이며 `KILN_MODEL`에는 운영진이 제공한 정확한 식별자를 사용한다. 실제 비밀값은 저장소에 올리지 않고 `.env.example`에는 빈 값이나 설명만 둔다.
+설정 항목: `KILN_BASE_URL`, `KILN_API_KEY`, `KILN_MODEL`, `DATABASE_URL`, `CHAIN_RPC_URL`, `CHAIN_ID`, `AUDIT_CONTRACT_ADDRESS`, `TESTNET_PRIVATE_KEY`. 프로젝트 목표 모델은 Qwen3-32B이며 `KILN_MODEL`에는 운영진이 제공한 정확한 식별자를 사용한다. Qwen3-32B 사용 가능 여부는 원문 gpt-oss-120b 요구와 대조해 확인한다. 실제 비밀값은 저장소에 올리지 않고 `.env.example`에는 빈 값이나 설명만 둔다.
 
 제출 시 준비할 자료: 실행 안내, 환경 설정 예시, 데모 영상, 정상/차단 로그, testnet·contract 주소와 TX 링크, 호출별 usage 표, AI와 일반 코드 역할 설명, 알려진 한계. 이 문서의 체크박스는 구현 완료 후 증거와 함께 체크한다.
