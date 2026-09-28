@@ -18,16 +18,16 @@ LLM은 조건 초안·추천 설명만 맡는다. 승인 권한, 가격 산정, 
 
 | 담당 | 역할 | 시작 단계 |
 |---|---|---|
-| 시우 | Policy / Blockchain | N-3 / P0: 정책 엔진·경계 테스트 |
-| 윤석 | Backend / AI Agent | N-2 / B0: 공통 타입·API 계약·서버 골격 |
-| 민진 | Frontend | N-5 / F0: 계약 타입·mock UI |
-| 민규 | Data / Integration / QA | N-4 / D0: 상품 fixture·검색·simulator |
+| 시우 | Policy / Blockchain | 2-1 / P0: 정책 엔진·경계 테스트 |
+| 윤석 | Backend / AI Agent | 1-2 / B0: 공통 타입·API 계약·서버 골격 |
+| 민진 | Frontend | 2-3 / F0: 계약 타입·mock UI |
+| 민규 | Data / Integration / QA | 2-2 / D0: 상품 fixture·검색·simulator |
 
-N-2가 완료되면 시우·민진·민규의 기반 구현을 병렬로 시작한다. 작업 ID별 상세 의존성·인수 기준은 [TEAM_PLAN.md](TEAM_PLAN.md)에 있다.
+1-2가 완료되면 시우·민진·민규의 기반 구현을 병렬로 시작한다. 작업 ID별 상세 의존성·인수 기준은 [TEAM_PLAN.md](TEAM_PLAN.md)에 있다.
 
 ## 문서 읽는 순서
 
-1. [TEAM_PLAN.md](TEAM_PLAN.md) — 역할, N-1~N-18 단계와 선행 조건
+1. [TEAM_PLAN.md](TEAM_PLAN.md) — 역할, 1-1~4-5 단계와 선행 조건
 2. [PROJECT.md](PROJECT.md) — 제품 범위·사용자 흐름
 3. [AGENTS.md](AGENTS.md) — 저장소 규칙·보안·검증 방법
 4. [CONTRACTS.md](CONTRACTS.md) — API·공통 타입·파일 소유권
